@@ -19,17 +19,17 @@ const memoizeFn = <ArgsType extends unknown[], ReturnType>(
 
 type GetHasFile = (dirContents: string[]) => boolean;
 
-const getHasPackageJson: GetHasFile = memoizeFn((dirContents: string[]): boolean =>
-  dirContents.includes('package.json')
+const getHasPackageJson: GetHasFile = memoizeFn(directoryContents =>
+  directoryContents.includes('package.json')
 );
-const getHasNpmLock: GetHasFile = memoizeFn((dirContents: string[]): boolean =>
-  dirContents.includes('package-lock.json')
+const getHasNpmLock: GetHasFile = memoizeFn(directoryContents =>
+  directoryContents.includes('package-lock.json')
 );
-const getHasPnpmLock: GetHasFile = memoizeFn((dirContents: string[]): boolean =>
-  dirContents.includes('pnpm-lock.yaml')
+const getHasPnpmLock: GetHasFile = memoizeFn(directoryContents =>
+  directoryContents.includes('pnpm-lock.yaml')
 );
-const getHasYarnLock: GetHasFile = memoizeFn((dirContents: string[]): boolean =>
-  dirContents.includes('yarn.lock')
+const getHasYarnLock: GetHasFile = memoizeFn(directoryContents =>
+  directoryContents.includes('yarn.lock')
 );
 
 const checkAndLogLockfile = (hasLockFile: boolean, packageManagerName: string) => {
