@@ -3,34 +3,12 @@ import chalk from 'chalk';
 import { readdir, readFile } from 'fs/promises';
 import { join, normalize } from 'path';
 
-const memoizeFn = <ArgsType extends unknown[], ReturnType>(
-  fn: (...args: ArgsType) => ReturnType,
-  argsSerializer: (args: ArgsType) => string = JSON.stringify
-) => {
-  const resultMap = new Map<string, ReturnType>();
-  return (...args: ArgsType): ReturnType => {
-    const lookupKey = argsSerializer(args);
-    if (!resultMap.has(lookupKey)) {
-      resultMap.set(lookupKey, fn(...args));
-    }
-    return resultMap.get(lookupKey)!;
-  };
-};
-
 type GetHasFile = (dirContents: string[]) => boolean;
 
-const getHasPackageJson: GetHasFile = memoizeFn(directoryContents =>
-  directoryContents.includes('package.json')
-);
-const getHasNpmLock: GetHasFile = memoizeFn(directoryContents =>
-  directoryContents.includes('package-lock.json')
-);
-const getHasPnpmLock: GetHasFile = memoizeFn(directoryContents =>
-  directoryContents.includes('pnpm-lock.yaml')
-);
-const getHasYarnLock: GetHasFile = memoizeFn(directoryContents =>
-  directoryContents.includes('yarn.lock')
-);
+const getHasPackageJson: GetHasFile = dirContents => dirContents.includes('package.json');
+const getHasNpmLock: GetHasFile = dirContents => dirContents.includes('package-lock.json');
+const getHasPnpmLock: GetHasFile = dirContents => dirContents.includes('pnpm-lock.yaml');
+const getHasYarnLock: GetHasFile = directoryContents => directoryContents.includes('yarn.lock');
 
 const checkAndLogLockfile = (hasLockFile: boolean, packageManagerName: string) => {
   if (hasLockFile) {
@@ -80,6 +58,7 @@ const lookUpDirectory = async (path: string) => {
         0
       );
       const maxValWidth = (process.stdout.columns ?? 80) - maxKeyLength - 8;
+
       console.log(chalk.bold.green('Available Commands:'));
       Object.entries(scripts).forEach(([key, val]) => {
         const shortenedVal =
